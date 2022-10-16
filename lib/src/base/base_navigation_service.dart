@@ -11,8 +11,8 @@ abstract class NavigationService {
     BaseModule newModule, {
     DeepLink? deepLink,
   });
-
   Future<void> finishModule({DeepLink? deepLink});
+  Future<void> onSend({DeepLink? deepLink});
 
   void push(FeaturePage page, {DeepLink? deepLink});
   void root(FeaturePage page, {DeepLink? deepLink});

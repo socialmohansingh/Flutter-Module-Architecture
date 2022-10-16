@@ -115,6 +115,11 @@ class NavigationFlowCubit extends Cubit<_NavigationState>
   bool shouldPush() {
     return true;
   }
+
+  @override
+  Future<void> onSend({DeepLink? deepLink}) async {
+    _module.onReceive(deepLink: deepLink);
+  }
 }
 
 class RootNavigatorWidget extends StatefulWidget {
