@@ -37,7 +37,7 @@ class HostNavigation {
       key: "md1",
       onReceive: ({deepLink}) {},
       onError: (error) {
-        print("Module1111 Error ${error}");
+        print("Module1 Error ${error}");
       },
     );
     _navigationStack.startModule(module1);
