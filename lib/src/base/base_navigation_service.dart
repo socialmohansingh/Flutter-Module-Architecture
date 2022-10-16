@@ -3,7 +3,7 @@ import 'package:flutter_module_architecture/src/base/deep_link.dart';
 import 'package:flutter_module_architecture/src/page/feature_page.dart';
 
 // ignore: must_be_immutable
-abstract class BaseNavigationService {
+abstract class NavigationService {
   bool shouldPop();
   bool shouldPush();
 

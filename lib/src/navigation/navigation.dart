@@ -20,9 +20,9 @@ class InitialState extends _NavigationState {
 
 // ignore: must_be_immutable
 class NavigationFlowCubit extends Cubit<_NavigationState>
-    implements BaseNavigationService {
+    implements NavigationService {
   final List<FeaturePage> _pages = [];
-  BaseNavigationService? _parentNavigationStack;
+  NavigationService? _parentNavigationStack;
   final BaseModule _module;
 
   // ignore: library_private_types_in_public_api
@@ -72,13 +72,14 @@ class NavigationFlowCubit extends Cubit<_NavigationState>
       this,
       InitialState([]),
     );
-    await newModule.init(curentNavigationStack, deepLink: deepLink);
+    var navRouter =
+        await newModule.init(curentNavigationStack, deepLink: deepLink);
     FeaturePage page = await newModule.pageWrapper(
       RootNavigatorWidget(
         navigationFlow: curentNavigationStack,
       ),
     );
-    await newModule.setRootPage(deepLink: deepLink);
+    await newModule.setRootPage(navRouter, deepLink: deepLink);
     push(page);
   }
 

@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_module_architecture/flutter_module_architecture.dart';
-import 'package:get_it/get_it.dart';
 import 'package:test_package/host_module/di/host_di.dart';
 import 'package:test_package/host_module/host_navigation_router.dart';
 
-class HostModule extends BaseModule {
+class HostModule extends BaseModule<HostNavigation> {
   HostDI di = HostDI();
   HostModule({
     required super.key,
@@ -13,9 +12,13 @@ class HostModule extends BaseModule {
   });
 
   @override
-  Future<void> init(BaseNavigationService navigationRouter,
-      {DeepLink? deepLink}) async {
-    await di.init(HostNavigation(navigationRouter));
+  Future<NavigationRouter> init(
+    NavigationService navigationStack, {
+    DeepLink? deepLink,
+  }) async {
+    var nav = HostNavigation(navigationStack: navigationStack);
+    await di.init(nav);
+    return nav;
   }
 
   @override
@@ -30,8 +33,11 @@ class HostModule extends BaseModule {
   }
 
   @override
-  Future<void> setRootPage({DeepLink? deepLink}) async {
-    GetIt.instance.get<HostNavigation>().showFeature1Page();
+  Future<void> setRootPage(
+    HostNavigation navigationRouter, {
+    DeepLink? deepLink,
+  }) async {
+    navigationRouter.showFeature1Page();
   }
 
   @override

@@ -5,13 +5,11 @@ import 'package:test_package/host_module/feature2/feature2_page.dart';
 
 import '../module1/module1.dart';
 
-class HostNavigation {
-  final BaseNavigationService _navigationStack;
-
-  HostNavigation(this._navigationStack);
+class HostNavigation extends NavigationRouter {
+  HostNavigation({required super.navigationStack});
 
   showFeature1Page() {
-    _navigationStack.root(
+    navigationStack.root(
       FeaturePage(
         page: const MaterialPage(
           key: ValueKey("fp1"),
@@ -22,7 +20,7 @@ class HostNavigation {
   }
 
   showFeature2Page() {
-    _navigationStack.push(
+    navigationStack.push(
       FeaturePage(
         page: const MaterialPage(
           key: ValueKey("fp2"),
@@ -40,6 +38,6 @@ class HostNavigation {
         print("Module1 Error ${error}");
       },
     );
-    _navigationStack.startModule(module1);
+    navigationStack.startModule(module1);
   }
 }

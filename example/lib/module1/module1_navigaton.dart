@@ -4,17 +4,15 @@ import 'package:test_package/module1/feature1/m_feature1_page.dart';
 import 'package:test_package/module1/feature2/feature2_page.dart';
 import 'package:test_package/module2/module2.dart';
 
-class Module1Navigation {
-  final BaseNavigationService _navigationStack;
-
-  Module1Navigation(this._navigationStack);
+class Module1Navigation extends NavigationRouter {
+  Module1Navigation({required super.navigationStack});
 
   finish() {
-    _navigationStack.finishModule();
+    navigationStack.finishModule();
   }
 
   showFeature1Page() {
-    _navigationStack.root(
+    navigationStack.root(
       FeaturePage(
         page: const MaterialPage(
           key: ValueKey("mfp1"),
@@ -25,7 +23,7 @@ class Module1Navigation {
   }
 
   showFeature2Page() {
-    _navigationStack.push(
+    navigationStack.push(
       FeaturePage(
         page: const MaterialPage(
           key: ValueKey("mfp2"),
@@ -41,6 +39,6 @@ class Module1Navigation {
       onReceive: ({deepLink}) {},
       onError: (error) {},
     );
-    _navigationStack.startModule(module2);
+    navigationStack.startModule(module2);
   }
 }

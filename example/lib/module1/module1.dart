@@ -1,9 +1,8 @@
 import 'package:flutter_module_architecture/flutter_module_architecture.dart';
-import 'package:get_it/get_it.dart';
 import 'package:test_package/module1/di/module1_di.dart';
 import 'package:test_package/module1/module1_navigaton.dart';
 
-class Modile1 extends BaseModule {
+class Modile1 extends BaseModule<Module1Navigation> {
   Module1DI di = Module1DI();
   Modile1({
     required super.key,
@@ -12,14 +11,21 @@ class Modile1 extends BaseModule {
   });
 
   @override
-  Future<void> init(BaseNavigationService navigationRouter,
-      {DeepLink? deepLink}) async {
-    await di.init(Module1Navigation(navigationRouter));
+  Future<Module1Navigation> init(
+    NavigationService navigationStack, {
+    DeepLink? deepLink,
+  }) async {
+    var nav = Module1Navigation(navigationStack: navigationStack);
+    await di.init(nav);
+    return nav;
   }
 
   @override
-  Future<void> setRootPage({DeepLink? deepLink}) async {
-    GetIt.instance.get<Module1Navigation>().showFeature1Page();
+  Future<void> setRootPage(
+    Module1Navigation navigationRouter, {
+    DeepLink? deepLink,
+  }) async {
+    navigationRouter.showFeature1Page();
   }
 
   @override
