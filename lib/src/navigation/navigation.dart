@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_module_architecture/src/base/base_module.dart';
+import 'package:flutter_module_architecture/src/base/base_navigation_service.dart';
 import 'package:flutter_module_architecture/src/base/deep_link.dart';
 import 'package:flutter_module_architecture/src/page/feature_page.dart';
-
-import '../base/base_navigation_service.dart';
 
 abstract class _NavigationState {
   List<FeaturePage> pages;
@@ -74,7 +73,7 @@ class NavigationFlowCubit extends Cubit<_NavigationState>
       InitialState([]),
     );
     await newModule.init(curentNavigationStack, deepLink: deepLink);
-    FeaturePage page = await newModule.pageWraper(
+    FeaturePage page = await newModule.pageWrapper(
       RootNavigatorWidget(
         navigationFlow: curentNavigationStack,
       ),

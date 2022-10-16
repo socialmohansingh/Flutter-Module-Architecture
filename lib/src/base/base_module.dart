@@ -2,20 +2,36 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_module_architecture/flutter_module_architecture.dart';
-
-import '../navigation/navigation.dart';
+import 'package:flutter_module_architecture/src/navigation/navigation.dart';
 
 abstract class ModuleMethod {
-  Function({DeepLink? deepLink}) onReceive;
+  Function({
+    DeepLink? deepLink,
+  }) onReceive;
   Function(Object error) onError;
 
-  ModuleMethod({required this.onReceive, required this.onError});
+  ModuleMethod({
+    required this.onReceive,
+    required this.onError,
+  });
 
-  Future<void> init(BaseNavigationService navigationRouter,
-      {DeepLink? deepLink});
-  Future<void> setRootPage({DeepLink? deepLink});
-  Future<FeaturePage> pageWraper(Widget child, {DeepLink? deepLink});
-  Future<void> dispose({DeepLink? deepLink});
+  Future<void> init(
+    BaseNavigationService navigationRouter, {
+    DeepLink? deepLink,
+  });
+
+  Future<void> setRootPage({
+    DeepLink? deepLink,
+  });
+
+  Future<FeaturePage> pageWrapper(
+    Widget child, {
+    DeepLink? deepLink,
+  });
+
+  Future<void> dispose({
+    DeepLink? deepLink,
+  });
 }
 
 abstract class BaseModule extends ModuleMethod {
@@ -27,7 +43,10 @@ abstract class BaseModule extends ModuleMethod {
   });
 
   @override
-  Future<FeaturePage> pageWraper(Widget child, {DeepLink? deepLink}) async {
+  Future<FeaturePage> pageWrapper(
+    Widget child, {
+    DeepLink? deepLink,
+  }) async {
     return FeaturePage(page: MaterialPage(child: child));
   }
 
@@ -44,7 +63,7 @@ abstract class BaseModule extends ModuleMethod {
         InitialState([]),
       );
       await init(navigationStack, deepLink: deepLink);
-      FeaturePage page = await pageWraper(
+      FeaturePage page = await pageWrapper(
         RootNavigatorWidget(
           navigationFlow: navigationStack,
         ),
@@ -64,8 +83,10 @@ runAppModule(
   Map<Object?, Object?>? zoneValues,
   ZoneSpecification? zoneSpecification,
 }) {
-  module._run(onRunAppError,
-      deepLink: deepLink,
-      zoneValues: zoneValues,
-      zoneSpecification: zoneSpecification);
+  module._run(
+    onRunAppError,
+    deepLink: deepLink,
+    zoneValues: zoneValues,
+    zoneSpecification: zoneSpecification,
+  );
 }

@@ -19,12 +19,14 @@ class HostModule extends BaseModule {
   }
 
   @override
-  Future<FeaturePage> pageWraper(Widget child, {DeepLink? deepLink}) async {
+  Future<FeaturePage> pageWrapper(Widget child, {DeepLink? deepLink}) async {
     return FeaturePage(
-        page: MaterialPage(
-            child: MaterialApp(
-      home: child,
-    )));
+      page: MaterialPage(
+        child: MaterialApp(
+          home: child,
+        ),
+      ),
+    );
   }
 
   @override
