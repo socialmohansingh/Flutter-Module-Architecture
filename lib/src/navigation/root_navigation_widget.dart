@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_module_architecture/src/navigation/navigation.dart';
+import 'package:flutter_module_architecture/src/navigation/navigation_cubit.dart';
 import 'package:flutter_module_architecture/src/navigation/navigation_state.dart';
 
 class RootNavigatorWidget extends StatefulWidget {
