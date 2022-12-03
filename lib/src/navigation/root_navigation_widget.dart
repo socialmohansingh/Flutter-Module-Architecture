@@ -21,7 +21,7 @@ class _RootNavigatorWidgetState extends State<RootNavigatorWidget> {
       create: (context) => NavigationCubit(InitialState([])),
       child: BlocBuilder<NavigationCubit, NavigationState>(
         builder: (context, state) {
-          List<Page<dynamic>> pages = state.pages.map((e) => e.page).toList();
+          List<Page<dynamic>> pages = state.pages;
           return Navigator(
             pages: List.unmodifiable(pages),
             observers: [heroController],

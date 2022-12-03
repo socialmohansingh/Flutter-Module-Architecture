@@ -1,5 +1,5 @@
-import 'package:flutter_module_architecture/src/page/feature_page.dart';
+import 'package:flutter/material.dart';
 
 abstract class BaseModule {
-  FeaturePage getRootWidget();
+  MaterialPage getRootWidget();
 }

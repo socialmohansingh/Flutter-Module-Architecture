@@ -1,7 +1,7 @@
-import 'package:flutter_module_architecture/src/page/feature_page.dart';
+import 'package:flutter/material.dart';
 
 abstract class NavigationState {
-  List<FeaturePage> pages;
+  List<MaterialPage> pages;
   NavigationState(this.pages);
 }
 
