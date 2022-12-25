@@ -5,7 +5,7 @@ import 'package:flutter_module_architecture/src/navigation/navigation_state.dart
 
 // ignore: must_be_immutable
 class RootNavigatorWidget extends StatefulWidget {
-  List<Page<dynamic>> initialPages;
+  List<MaterialPage<dynamic>> initialPages;
   RootNavigatorWidget({
     required this.initialPages,
     super.key,
@@ -26,6 +26,9 @@ class _RootNavigatorWidgetState extends State<RootNavigatorWidget> {
         builder: (context, state) {
           List<Page<dynamic>> pages =
               state.pages.isEmpty ? widget.initialPages : state.pages;
+          if (pages.isEmpty) {
+            context.read<NavigationCubit>().pushPages(widget.initialPages);
+          }
           return Navigator(
             pages: List.unmodifiable(pages),
             observers: [heroController],
