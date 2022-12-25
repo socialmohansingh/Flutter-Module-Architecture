@@ -21,7 +21,12 @@ class _RootNavigatorWidgetState extends State<RootNavigatorWidget> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => NavigationCubit(InitialState(widget.initialPages)),
+      create: (context) {
+        final navigationCubit =
+            NavigationCubit(InitialState(widget.initialPages));
+        context._setNavigation(navigationCubit);
+        return navigationCubit;
+      },
       child: BlocBuilder<NavigationCubit, NavigationState>(
         builder: (context, state) {
           List<Page<dynamic>> pages = state.pages;
@@ -45,5 +50,16 @@ class _RootNavigatorWidgetState extends State<RootNavigatorWidget> {
   @override
   void dispose() {
     super.dispose();
+  }
+}
+
+extension BuildContextNavigation on BuildContext {
+  static NavigationCubit? _navigaitonCubit;
+  void _setNavigation(NavigationCubit navigationCubit) {
+    BuildContextNavigation._navigaitonCubit = navigationCubit;
+  }
+
+  NavigationCubit get navigationCubit {
+    return BuildContextNavigation._navigaitonCubit!;
   }
 }
