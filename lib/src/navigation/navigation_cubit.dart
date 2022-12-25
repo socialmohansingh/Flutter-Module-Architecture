@@ -8,8 +8,11 @@ class NavigationCubit extends Cubit<NavigationState>
   final List<MaterialPage> _pages = [];
 
   NavigationCubit(
-    super.initialState,
-  );
+    NavigationState initialState,
+  ) : super(initialState) {
+    _pages.addAll(initialState.pages);
+    emit(UpdatePage(_pages));
+  }
 
   @override
   bool pop({argument}) {
