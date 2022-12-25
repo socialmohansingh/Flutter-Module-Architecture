@@ -21,14 +21,10 @@ class _RootNavigatorWidgetState extends State<RootNavigatorWidget> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => NavigationCubit(InitialState([])),
+      create: (context) => NavigationCubit(InitialState(widget.initialPages)),
       child: BlocBuilder<NavigationCubit, NavigationState>(
         builder: (context, state) {
-          List<Page<dynamic>> pages =
-              state.pages.isEmpty ? widget.initialPages : state.pages;
-          if (pages.isEmpty) {
-            context.read<NavigationCubit>().pushPages(widget.initialPages);
-          }
+          List<Page<dynamic>> pages = state.pages;
           return Navigator(
             pages: List.unmodifiable(pages),
             observers: [heroController],
