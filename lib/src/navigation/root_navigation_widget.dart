@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_module_architecture/src/module/dependency_container.dart';
 import 'package:flutter_module_architecture/src/navigation/navigation_cubit.dart';
 import 'package:flutter_module_architecture/src/navigation/navigation_state.dart';
 
 // ignore: must_be_immutable
 class RootNavigatorWidget extends StatefulWidget {
   List<MaterialPage<dynamic>> initialPages;
+  final DependencyContainer? dependencyContainer;
+
   RootNavigatorWidget({
     required this.initialPages,
+    this.dependencyContainer,
     super.key,
   });
 
@@ -20,26 +24,31 @@ class _RootNavigatorWidgetState extends State<RootNavigatorWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => NavigationCubit(InitialState(widget.initialPages)),
-      child: BlocBuilder<NavigationCubit, NavigationState>(
-        builder: (context, state) {
-          List<Page<dynamic>> pages = state.pages;
-          return Navigator(
-            pages: List.unmodifiable(pages),
-            observers: [heroController],
-            onPopPage: (route, result) {
-              final didPop = route.didPop(result);
-              if (!didPop) {
-                return false;
-              }
-              context.read<NavigationCubit>().pop();
-              return true;
-            },
+    return FutureBuilder(
+        future: widget.dependencyContainer?.init(),
+        builder: (context, as) {
+          return BlocProvider(
+            create: (context) =>
+                NavigationCubit(InitialState(widget.initialPages)),
+            child: BlocBuilder<NavigationCubit, NavigationState>(
+              builder: (context, state) {
+                List<Page<dynamic>> pages = state.pages;
+                return Navigator(
+                  pages: List.unmodifiable(pages),
+                  observers: [heroController],
+                  onPopPage: (route, result) {
+                    final didPop = route.didPop(result);
+                    if (!didPop) {
+                      return false;
+                    }
+                    context.read<NavigationCubit>().pop();
+                    return true;
+                  },
+                );
+              },
+            ),
           );
-        },
-      ),
-    );
+        });
   }
 
   @override

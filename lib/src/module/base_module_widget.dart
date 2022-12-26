@@ -3,13 +3,11 @@ import 'package:flutter_module_architecture/flutter_module_architecture.dart';
 
 class BaseModuleWidget extends StatefulWidget {
   final Widget child;
-  final bool useBaseNavigationCubit;
   final DependencyContainer? dependencyContainer;
 
   const BaseModuleWidget({
     required this.child,
     this.dependencyContainer,
-    this.useBaseNavigationCubit = true,
     super.key,
   });
 
@@ -21,7 +19,7 @@ class _BaseModuleWidgetState extends State<BaseModuleWidget> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: widget.dependencyContainer?.init(context.navigationCubit),
+      future: widget.dependencyContainer?.init(),
       builder: (context, as) {
         return widget.child;
       },

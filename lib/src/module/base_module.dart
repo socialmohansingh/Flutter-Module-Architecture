@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+abstract class ModuleFeaturePage {}
+
 abstract class BaseModule {
-  MaterialPage getRootWidget();
+  MaterialPage getRootWidget({ModuleFeaturePage? displayPage});
 }
