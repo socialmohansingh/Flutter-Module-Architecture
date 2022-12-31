@@ -20,8 +20,18 @@ class _BaseModuleWidgetState extends State<BaseModuleWidget> {
   Widget build(BuildContext context) {
     return FutureBuilder(
       future: widget.dependencyContainer?.init(),
-      builder: (context, as) {
-        return widget.child;
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          return widget.child;
+        } else {
+          return const Center(
+            child: SizedBox(
+              height: 55,
+              width: 55,
+              child: CircularProgressIndicator(),
+            ),
+          );
+        }
       },
     );
   }

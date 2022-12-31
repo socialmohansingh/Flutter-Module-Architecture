@@ -26,34 +26,45 @@ class _RootNavigatorWidgetState extends State<RootNavigatorWidget> {
   Widget build(BuildContext context) {
     return FutureBuilder(
         future: widget.dependencyContainer?.init(),
-        builder: (context, as) {
-          return BlocProvider(
-            create: (context) =>
-                NavigationCubit(InitialState(widget.initialPages)),
-            child: BlocBuilder<NavigationCubit, NavigationState>(
-              builder: (context, state) {
-                List<Page<dynamic>> pages = state.pages;
-                return Navigator(
-                  pages: List.unmodifiable(pages),
-                  observers: [heroController],
-                  onPopPage: (route, result) {
-                    final didPop = route.didPop(result);
-                    if (!didPop) {
-                      return false;
-                    }
-                    context.read<NavigationCubit>().pop();
-                    return true;
-                  },
-                );
-              },
-            ),
-          );
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            return BlocProvider(
+              create: (context) =>
+                  NavigationCubit(InitialState(widget.initialPages)),
+              child: BlocBuilder<NavigationCubit, NavigationState>(
+                builder: (context, state) {
+                  List<Page<dynamic>> pages = state.pages;
+                  return Navigator(
+                    pages: List.unmodifiable(pages),
+                    observers: [heroController],
+                    onPopPage: (route, result) {
+                      final didPop = route.didPop(result);
+                      if (!didPop) {
+                        return false;
+                      }
+                      context.read<NavigationCubit>().pop();
+                      return true;
+                    },
+                  );
+                },
+              ),
+            );
+          } else {
+            return const Center(
+              child: SizedBox(
+                height: 55,
+                width: 55,
+                child: CircularProgressIndicator(),
+              ),
+            );
+          }
         });
   }
 
   @override
   void dispose() {
     super.dispose();
+    widget.dependencyContainer?.dispose();
   }
 }
 
