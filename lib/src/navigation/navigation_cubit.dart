@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_core/flutter_core.dart';
+import 'package:flutter_module_architecture/src/data_connector/data_connector_state.dart';
 import 'package:flutter_module_architecture/src/navigation/base_navigation_service.dart';
 import 'package:flutter_module_architecture/src/navigation/navigation_state.dart';
 

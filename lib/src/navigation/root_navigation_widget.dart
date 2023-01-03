@@ -1,17 +1,28 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_core/flutter_core.dart';
+import 'package:flutter_module_architecture/src/data_connector/data_connector_cubit.dart';
 import 'package:flutter_module_architecture/src/module/dependency_container.dart';
 import 'package:flutter_module_architecture/src/navigation/navigation_cubit.dart';
 import 'package:flutter_module_architecture/src/navigation/navigation_state.dart';
+
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 // ignore: must_be_immutable
 class RootNavigatorWidget extends StatefulWidget {
   List<MaterialPage<dynamic>> initialPages;
   final DependencyContainer? dependencyContainer;
+  final Widget? errorWidget;
+  final Widget? loadingWidget;
+  final Color primaryColor;
+  final Color backgroundColor;
 
   RootNavigatorWidget({
     required this.initialPages,
     this.dependencyContainer,
+    this.errorWidget,
+    this.loadingWidget,
+    this.primaryColor = Colors.black,
+    this.backgroundColor = Colors.white,
     super.key,
   });
 
@@ -28,13 +39,39 @@ class _RootNavigatorWidgetState extends State<RootNavigatorWidget> {
         future: widget.dependencyContainer?.init(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
-            return BlocProvider(
-              create: (context) =>
-                  NavigationCubit(InitialState(widget.initialPages)),
+            if (snapshot.hasError) {
+              return widget.errorWidget ??
+                  Scaffold(
+                    backgroundColor: widget.backgroundColor,
+                    body: Center(
+                      child: SizedBox(
+                        height: 55,
+                        width: 55,
+                        child: Text(
+                          snapshot.error.toString(),
+                          style: TextStyle(
+                            color: widget.primaryColor,
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+            }
+            return MultiBlocProvider(
+              providers: [
+                BlocProvider(
+                  create: (context) =>
+                      NavigationCubit(InitialState(widget.initialPages)),
+                ),
+                BlocProvider(
+                  create: (context) => DataConnectorCubit(),
+                )
+              ],
               child: BlocBuilder<NavigationCubit, NavigationState>(
                 builder: (context, state) {
                   List<Page<dynamic>> pages = state.pages;
                   return Navigator(
+                    key: navigatorKey,
                     pages: List.unmodifiable(pages),
                     observers: [heroController],
                     onPopPage: (route, result) {
@@ -50,13 +87,20 @@ class _RootNavigatorWidgetState extends State<RootNavigatorWidget> {
               ),
             );
           } else {
-            return const Center(
-              child: SizedBox(
-                height: 55,
-                width: 55,
-                child: CircularProgressIndicator(),
-              ),
-            );
+            return widget.loadingWidget ??
+                Scaffold(
+                  backgroundColor: widget.backgroundColor,
+                  body: Center(
+                    child: SizedBox(
+                      height: 55,
+                      width: 55,
+                      child: CircularProgressIndicator(
+                        color: widget.primaryColor,
+                        backgroundColor: widget.backgroundColor,
+                      ),
+                    ),
+                  ),
+                );
           }
         });
   }
@@ -71,5 +115,9 @@ class _RootNavigatorWidgetState extends State<RootNavigatorWidget> {
 extension BuildContextNavigation on BuildContext {
   NavigationCubit get navigationCubit {
     return read<NavigationCubit>();
+  }
+
+  DataConnectorCubit get dataConnectorCubit {
+    return read<DataConnectorCubit>();
   }
 }
