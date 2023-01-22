@@ -44,14 +44,10 @@ class _RootNavigatorWidgetState extends State<RootNavigatorWidget> {
                   Scaffold(
                     backgroundColor: widget.backgroundColor,
                     body: Center(
-                      child: SizedBox(
-                        height: 55,
-                        width: 55,
-                        child: Text(
-                          snapshot.error.toString(),
-                          style: TextStyle(
-                            color: widget.primaryColor,
-                          ),
+                      child: Text(
+                        snapshot.error.toString(),
+                        style: TextStyle(
+                          color: widget.primaryColor,
                         ),
                       ),
                     ),
