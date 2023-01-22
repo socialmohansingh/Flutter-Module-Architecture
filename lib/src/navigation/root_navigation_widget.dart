@@ -5,7 +5,8 @@ import 'package:flutter_module_architecture/src/module/dependency_container.dart
 import 'package:flutter_module_architecture/src/navigation/navigation_cubit.dart';
 import 'package:flutter_module_architecture/src/navigation/navigation_state.dart';
 
-final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+final GlobalKey<NavigatorState> moduleNavigatorKey =
+    GlobalKey<NavigatorState>();
 
 // ignore: must_be_immutable
 class RootNavigatorWidget extends StatefulWidget {
@@ -15,9 +16,11 @@ class RootNavigatorWidget extends StatefulWidget {
   final Widget? loadingWidget;
   final Color primaryColor;
   final Color backgroundColor;
+  final GlobalKey<NavigatorState>? navigatorKey;
 
   RootNavigatorWidget({
     required this.initialPages,
+    this.navigatorKey,
     this.dependencyContainer,
     this.errorWidget,
     this.loadingWidget,
@@ -67,7 +70,7 @@ class _RootNavigatorWidgetState extends State<RootNavigatorWidget> {
                 builder: (context, state) {
                   List<Page<dynamic>> pages = state.pages;
                   return Navigator(
-                    key: navigatorKey,
+                    key: widget.navigatorKey ?? moduleNavigatorKey,
                     pages: List.unmodifiable(pages),
                     observers: [heroController],
                     onPopPage: (route, result) {
