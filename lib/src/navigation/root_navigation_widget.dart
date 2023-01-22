@@ -9,7 +9,7 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 // ignore: must_be_immutable
 class RootNavigatorWidget extends StatefulWidget {
-  List<MaterialPage<dynamic>> initialPages;
+  List<MaterialPage<dynamic>> Function() initialPages;
   final DependencyContainer? dependencyContainer;
   final Widget? errorWidget;
   final Widget? loadingWidget;
@@ -61,7 +61,7 @@ class _RootNavigatorWidgetState extends State<RootNavigatorWidget> {
               providers: [
                 BlocProvider(
                   create: (context) =>
-                      NavigationCubit(InitialState(widget.initialPages)),
+                      NavigationCubit(InitialState(widget.initialPages())),
                 ),
                 BlocProvider(
                   create: (context) => DataConnectorCubit(),
