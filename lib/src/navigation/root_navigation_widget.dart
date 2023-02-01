@@ -66,18 +66,24 @@ class _RootNavigatorWidgetState extends State<RootNavigatorWidget> {
               child: BlocBuilder<NavigationCubit, NavigationState>(
                 builder: (context, state) {
                   List<Page<dynamic>> pages = state.pages;
-                  return Navigator(
-                    key: widget.navigatorKey,
-                    pages: List.unmodifiable(pages),
-                    observers: [heroController],
-                    onPopPage: (route, result) {
-                      final didPop = route.didPop(result);
-                      if (!didPop) {
-                        return false;
-                      }
+                  return WillPopScope(
+                    onWillPop: () async {
                       context.read<NavigationCubit>().pop();
-                      return true;
+                      return false;
                     },
+                    child: Navigator(
+                      key: widget.navigatorKey,
+                      pages: List.unmodifiable(pages),
+                      observers: [heroController],
+                      onPopPage: (route, result) {
+                        final didPop = route.didPop(result);
+                        if (!didPop) {
+                          return false;
+                        }
+                        context.read<NavigationCubit>().pop();
+                        return true;
+                      },
+                    ),
                   );
                 },
               ),
