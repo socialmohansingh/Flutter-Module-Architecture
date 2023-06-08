@@ -2,7 +2,9 @@ abstract class DataConnectorState<T> {
   final T object;
   DataConnectorState({required this.object});
 }
-
+class DataConnectorInitial extends DataConnectorState<bool> {
+  DataTransmitToAnotherPage({super.object = true});
+}
 class DataTransmitToAnotherPage<T> extends DataConnectorState<T> {
   DataTransmitToAnotherPage({required super.object});
 }
