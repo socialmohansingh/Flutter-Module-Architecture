@@ -115,6 +115,10 @@ class _RootNavigatorWidgetState extends State<RootNavigatorWidget> {
 }
 
 extension BuildContextNavigation on BuildContext {
+  static DataConnectorCubit get dataConnector {
+    return read<DataConnectorCubit>();
+  }
+  
   NavigationCubit get navigationCubit {
     return read<NavigationCubit>();
   }
@@ -122,4 +126,9 @@ extension BuildContextNavigation on BuildContext {
   DataConnectorCubit get dataConnectorCubit {
     return read<DataConnectorCubit>();
   }
+}
+
+class GlobalNavigation {
+  static final navigationCubit;
+  GlobalNavigation({required this.navigationCubit});
 }
