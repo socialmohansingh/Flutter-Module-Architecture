@@ -127,8 +127,3 @@ extension BuildContextNavigation on BuildContext {
     return read<DataConnectorCubit>();
   }
 }
-
-class GlobalNavigation {
-  static final navigationCubit;
-  GlobalNavigation({required this.navigationCubit});
-}
