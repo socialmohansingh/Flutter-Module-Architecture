@@ -3,7 +3,7 @@ abstract class DataConnectorState<T> {
   DataConnectorState({required this.object});
 }
 class DataConnectorInitial extends DataConnectorState<bool> {
-  DataTransmitToAnotherPage({super.object = true});
+  DataConnectorInitial({super.object = true});
 }
 class DataTransmitToAnotherPage<T> extends DataConnectorState<T> {
   DataTransmitToAnotherPage({required super.object});
