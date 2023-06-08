@@ -60,7 +60,7 @@ class _RootNavigatorWidgetState extends State<RootNavigatorWidget> {
                       NavigationCubit(InitialState(widget.initialPages())),
                 ),
                 BlocProvider(
-                  create: (context) => BuildContextNavigation.dataConnector,
+                  create: (context) => GlobalConnector.data,
                 )
               ],
               child: BlocBuilder<NavigationCubit, NavigationState>(
@@ -115,9 +115,6 @@ class _RootNavigatorWidgetState extends State<RootNavigatorWidget> {
 }
 
 extension BuildContextNavigation on BuildContext {
-  static const dataConnector = DataConnectorCubit();
-
-  
   NavigationCubit get navigationCubit {
     return read<NavigationCubit>();
   }
@@ -125,4 +122,8 @@ extension BuildContextNavigation on BuildContext {
   DataConnectorCubit get dataConnectorCubit {
     return read<DataConnectorCubit>();
   }
+}
+
+class GlobalConnector {
+ static final data = DataConnectorCubit();
 }
