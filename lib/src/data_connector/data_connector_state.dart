@@ -3,8 +3,8 @@ abstract class DataConnectorState<T> {
   DataConnectorState({required this.object});
 }
 
-class DataConnectorInitial extends DataConnectorState<bool> {
-  DataConnectorInitial({super.object = true});
+class DataTransmitToAnotherPage<T> extends DataConnectorState<T> {
+  DataTransmitToAnotherPage({required super.object});
 }
 
 enum AuthorizationConnectionType { authorized, notAuthorized }
