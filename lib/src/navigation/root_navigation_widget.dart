@@ -13,11 +13,13 @@ class RootNavigatorWidget extends StatefulWidget {
   final Widget? loadingWidget;
   final Color primaryColor;
   final Color backgroundColor;
+  final Future<bool> Function(NavigationCubit navigation) onWillPop;
   final GlobalKey<NavigatorState>? navigatorKey;
 
   RootNavigatorWidget({
     required this.navigatorKey,
     required this.initialPages,
+    required this.onWillPop,
     this.dependencyContainer,
     this.errorWidget,
     this.loadingWidget,
@@ -67,9 +69,8 @@ class _RootNavigatorWidgetState extends State<RootNavigatorWidget> {
                 builder: (context, state) {
                   List<Page<dynamic>> pages = state.pages;
                   return WillPopScope(
-                    onWillPop: () async {
-                      context.read<NavigationCubit>().pop();
-                      return false;
+                    onWillPop: () {
+                      return widget.onWillPop(context.read<NavigationCubit>());
                     },
                     child: Navigator(
                       key: widget.navigatorKey,
