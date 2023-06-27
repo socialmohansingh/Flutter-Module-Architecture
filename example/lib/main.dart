@@ -31,7 +31,7 @@ class _MainAppState extends State<MainApp> {
       onWillPop: (navigation) async {
         print("willPopScope");
         navigation.pop();
-        return false;
+        return true;
       },
       dependencyContainer: AppDependencyContainer(),
       builder: (RouterDelegate<Object> routerDelegate,

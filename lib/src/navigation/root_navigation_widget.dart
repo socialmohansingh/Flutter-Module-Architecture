@@ -84,7 +84,10 @@ class _RootNavigatorWidgetState extends State<RootNavigatorWidget> {
                       .join("/");
                   return widget.builder(
                       UrlHandlerRouterDelegate(
-                        onWillPop: widget.onWillPop,
+                        onWillPop: (BuildContext context) {
+                          return widget
+                              .onWillPop(context.read<NavigationCubit>());
+                        },
                         initialPages: pages,
                         endPaths: endPath,
                         updatePath: (configuration) async {
