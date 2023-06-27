@@ -2,27 +2,37 @@ import 'package:flutter/material.dart';
 import 'package:flutter_core/flutter_core.dart';
 import 'package:flutter_module_architecture/src/data_connector/data_connector_cubit.dart';
 import 'package:flutter_module_architecture/src/module/dependency_container.dart';
+import 'package:flutter_module_architecture/src/navigation/app_page.dart';
 import 'package:flutter_module_architecture/src/navigation/navigation_cubit.dart';
 import 'package:flutter_module_architecture/src/navigation/navigation_state.dart';
+import 'package:flutter_module_architecture/src/route_parser/url_handler_delegates.dart';
+import 'package:flutter_module_architecture/src/route_parser/url_handler_information_parser.dart';
 
 // ignore: must_be_immutable
 class RootNavigatorWidget extends StatefulWidget {
-  List<MaterialPage<dynamic>> Function() initialPages;
+  List<AppPage> Function() rootPages;
+  final Function(String endPath, BuildContext context)? handleDeepLink;
+  final Widget Function(
+    RouterDelegate<Object> routerDelegate,
+    RouteInformationParser<Object> routeInformationParser,
+  ) builder;
   final DependencyContainer? dependencyContainer;
   final Widget? errorWidget;
   final Widget? loadingWidget;
   final Color primaryColor;
   final Color backgroundColor;
+  final bool isWeb;
   final Future<bool> Function(NavigationCubit navigation) onWillPop;
-  final GlobalKey<NavigatorState>? navigatorKey;
 
   RootNavigatorWidget({
-    required this.navigatorKey,
-    required this.initialPages,
+    required this.rootPages,
+    required this.builder,
     required this.onWillPop,
+    this.handleDeepLink,
     this.dependencyContainer,
     this.errorWidget,
     this.loadingWidget,
+    this.isWeb = false,
     this.primaryColor = Colors.black,
     this.backgroundColor = Colors.white,
     super.key,
@@ -33,8 +43,6 @@ class RootNavigatorWidget extends StatefulWidget {
 }
 
 class _RootNavigatorWidgetState extends State<RootNavigatorWidget> {
-  final heroController = HeroController();
-
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -43,9 +51,9 @@ class _RootNavigatorWidgetState extends State<RootNavigatorWidget> {
           if (snapshot.connectionState == ConnectionState.done) {
             if (snapshot.hasError) {
               return widget.errorWidget ??
-                  Scaffold(
-                    backgroundColor: widget.backgroundColor,
-                    body: Center(
+                  Container(
+                    color: widget.backgroundColor,
+                    child: Center(
                       child: Text(
                         snapshot.error.toString(),
                         style: TextStyle(
@@ -58,8 +66,9 @@ class _RootNavigatorWidgetState extends State<RootNavigatorWidget> {
             return MultiBlocProvider(
               providers: [
                 BlocProvider(
-                  create: (context) =>
-                      NavigationCubit(InitialState(widget.initialPages())),
+                  create: (context) => NavigationCubit(
+                    InitialState(widget.rootPages()),
+                  ),
                 ),
                 BlocProvider(
                   create: (context) => GlobalConnector.data,
@@ -67,33 +76,36 @@ class _RootNavigatorWidgetState extends State<RootNavigatorWidget> {
               ],
               child: BlocBuilder<NavigationCubit, NavigationState>(
                 builder: (context, state) {
-                  List<Page<dynamic>> pages = state.pages;
-                  return WillPopScope(
-                    onWillPop: () {
-                      return widget.onWillPop(context.read<NavigationCubit>());
-                    },
-                    child: Navigator(
-                      key: widget.navigatorKey,
-                      pages: List.unmodifiable(pages),
-                      observers: [heroController],
-                      onPopPage: (route, result) {
-                        final didPop = route.didPop(result);
-                        if (!didPop) {
-                          return false;
-                        }
-                        context.read<NavigationCubit>().pop();
-                        return true;
-                      },
-                    ),
-                  );
+                  List<AppPage> pages = state.pages;
+                  final endPath = pages
+                      .map((e) => e.path)
+                      .toList()
+                      .where((element) => element.isNotEmpty)
+                      .join("/");
+                  return widget.builder(
+                      UrlHandlerRouterDelegate(
+                        onWillPop: widget.onWillPop,
+                        initialPages: pages,
+                        endPaths: endPath,
+                        updatePath: (configuration) async {
+                          if (widget.handleDeepLink != null &&
+                              configuration.endPath != null) {
+                            widget.handleDeepLink!(
+                              configuration.endPath!,
+                              context,
+                            );
+                          }
+                        },
+                      ),
+                      UrlHandlerInformationParser());
                 },
               ),
             );
           } else {
             return widget.loadingWidget ??
-                Scaffold(
-                  backgroundColor: widget.backgroundColor,
-                  body: Center(
+                Container(
+                  color: widget.backgroundColor,
+                  child: Center(
                     child: SizedBox(
                       height: 55,
                       width: 55,
@@ -126,5 +138,5 @@ extension BuildContextNavigation on BuildContext {
 }
 
 class GlobalConnector {
- static final data = DataConnectorCubit();
+  static final data = DataConnectorCubit();
 }

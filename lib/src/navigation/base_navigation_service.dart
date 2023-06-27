@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_module_architecture/src/navigation/app_page.dart';
 
 abstract class NavigationService {
-  bool push(MaterialPage page);
-  bool pushPages(List<MaterialPage> pages);
-  bool resetPages(List<MaterialPage> pages);
-  bool root(MaterialPage page);
+  bool push(AppPage page);
+  bool pushPages(List<AppPage> pages);
+  bool resetPages(List<AppPage> pages);
+  bool root(AppPage page);
   bool pop({dynamic argument});
   bool popPage(String key);
   bool popToPage(String key, {dynamic argument});
