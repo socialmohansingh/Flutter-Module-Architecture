@@ -1,11 +1,13 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_module_architecture/flutter_module_architecture.dart';
 import 'package:test_package/second_screen.dart';
+import 'package:url_strategy/url_strategy.dart';
 
 void main() {
+  setPathUrlStrategy();
   runApp(MainApp());
 }
+
 class MainApp extends StatefulWidget {
   const MainApp({super.key});
 
@@ -16,26 +18,42 @@ class MainApp extends StatefulWidget {
 class _MainAppState extends State<MainApp> {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: RootNavigatorWidget(
-        initialPages: () => [
-          MaterialPage(
-            key: ValueKey("ff"),
+    return RootNavigatorWidget(
+      rootPages: () => [
+        AppPage(
+          page: const MaterialPage(
+            key: ValueKey(""),
             child: FirstPage(),
           ),
-        ],
-        onWillPop: (navigation) async {
-          print("willPopScope");
-          navigation.pop();
-          return false;
-        },
-        dependencyContainer: AppDependencyContainer(),
-        navigatorKey: GlobalKey<NavigatorState>(),
-      ),
+          path: "",
+        ),
+      ],
+      onWillPop: (navigation) async {
+        print("willPopScope");
+        navigation.pop();
+        return false;
+      },
+      dependencyContainer: AppDependencyContainer(),
+      builder: (RouterDelegate<Object> routerDelegate,
+          RouteInformationParser<Object> routeInformationParser) {
+        return MaterialApp.router(
+          routerDelegate: routerDelegate,
+          routeInformationParser: routeInformationParser,
+        );
+      },
+      handleDeepLink: (String endPath, context) {
+        context.navigationCubit.push(
+          AppPage(
+            page: const MaterialPage(
+              child: SecondPage(),
+            ),
+            path: "s",
+          ),
+        );
+      },
     );
   }
 }
-
 
 class AppDependencyContainer extends DependencyContainer {
   @override
@@ -50,8 +68,23 @@ class FirstPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: Container(child: Center(child: TextButton(onPressed: (){
-      context.navigationCubit.push(MaterialPage(key: ValueKey("s"), child: SecondPage()));
-    },child: Text("second"),),),));
+    return Scaffold(
+        body: Container(
+      child: Center(
+        child: TextButton(
+          onPressed: () {
+            context.navigationCubit.push(
+              AppPage(
+                page: const MaterialPage(
+                  child: SecondPage(),
+                ),
+                path: "s",
+              ),
+            );
+          },
+          child: Text("second"),
+        ),
+      ),
+    ));
   }
 }
