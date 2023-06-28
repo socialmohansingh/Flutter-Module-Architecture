@@ -32,7 +32,7 @@ class FlutterModule extends StatefulWidget {
     required Future<bool> Function(NavigationCubit navigation) onWillPop,
     required Future<List<AppPage>> Function() rootPages,
     DependencyContainer? dependencyContainer,
-    Function(String endPath, BuildContext context)? handleDeepLink,
+    Function(String endPath, BuildContext context, NavigationCubit navigation)? handleDeepLink,
     Widget Function(String error)? errorWidget,
     Widget Function()? loadingWidget,
   }) {
