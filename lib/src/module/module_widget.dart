@@ -11,7 +11,7 @@ import 'package:flutter_module_architecture/src/route_parser/url_handler_informa
 // ignore: must_be_immutable
 class FlutterModule extends StatefulWidget {
   Future<List<AppPage>> Function()? rootPages;
-  final Function(String endPath, BuildContext context)? handleDeepLink;
+  final Function(String endPath, BuildContext context, NavigationCubit navigation)? handleDeepLink;
   final Widget Function(
     BuildContext context, {
     RouterDelegate<Object>? routerDelegate,
@@ -96,7 +96,7 @@ class _FlutterModuleState extends State<FlutterModule> {
                 : widget.errorWidget!("");
           }
           return !widget.isRoot
-              ? getBuilder()
+              ? getBuilder(context)
               : MultiBlocProvider(
                   providers: [
                     BlocProvider(
@@ -116,7 +116,7 @@ class _FlutterModuleState extends State<FlutterModule> {
                           .toList()
                           .where((element) => element.isNotEmpty)
                           .join("/");
-                      return getBuilder(pages: pages, endPath: endPath);
+                      return getBuilder(context, pages: pages, endPath: endPath);
                     },
                   ),
                 );
@@ -136,7 +136,7 @@ class _FlutterModuleState extends State<FlutterModule> {
     }
   }
 
-  Widget getBuilder({List<AppPage> pages = const [], String endPath = ""}) {
+  Widget getBuilder(BuildContext context, {List<AppPage> pages = const [], String endPath = ""}) {
     return widget.builder(
       context,
       routerDelegate: !widget.isRoot
@@ -153,6 +153,7 @@ class _FlutterModuleState extends State<FlutterModule> {
                   widget.handleDeepLink!(
                     configuration.endPath!,
                     context,
+                    context.read<NavigationCubit>(),
                   );
                 }
               },
