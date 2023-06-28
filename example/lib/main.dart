@@ -25,7 +25,7 @@ class _MainAppState extends State<MainApp> {
           routeInformationParser: routeInformationParser,
         );
       },
-      rootPages: () {
+      rootPages: () async {
         return [
           AppPage(
             page: const MaterialPage(

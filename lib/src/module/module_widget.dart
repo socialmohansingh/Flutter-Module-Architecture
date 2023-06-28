@@ -127,12 +127,12 @@ class _FlutterModuleState extends State<FlutterModule> {
         }
       },
     );
+  }
 
-     loadAsyncFunctions() async {
-      await widget.dependencyContainer?.init();
-      if(widget.rootPages != null) {
-       _pages = await widget.rootPages!();
-      }
+  Future<void> loadAsyncFunctions() async {
+    await widget.dependencyContainer?.init();
+    if (widget.rootPages != null) {
+      _pages = await widget.rootPages!();
     }
   }
 
