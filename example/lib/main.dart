@@ -18,28 +18,28 @@ class MainApp extends StatefulWidget {
 class _MainAppState extends State<MainApp> {
   @override
   Widget build(BuildContext context) {
-    return RootNavigatorWidget(
-      rootPages: () => [
-        AppPage(
-          page: const MaterialPage(
-            key: ValueKey(""),
-            child: FirstPage(),
-          ),
-          path: "",
-        ),
-      ],
-      onWillPop: (navigation) async {
-        print("willPopScope");
-        navigation.pop();
-        return true;
-      },
-      dependencyContainer: AppDependencyContainer(),
-      builder: (RouterDelegate<Object> routerDelegate,
-          RouteInformationParser<Object> routeInformationParser) {
+    return FlutterModule.buildRootRouter(
+      builder: (routerDelegate, routeInformationParser, context) {
         return MaterialApp.router(
           routerDelegate: routerDelegate,
           routeInformationParser: routeInformationParser,
         );
+      },
+      rootPages: () {
+        return [
+          AppPage(
+            page: const MaterialPage(
+              key: ValueKey(""),
+              child: FirstPage(),
+            ),
+            path: "",
+          ),
+        ];
+      },
+      dependencyContainer: AppDependencyContainer(),
+      onWillPop: (navigation) async {
+        navigation.pop();
+        return true;
       },
       handleDeepLink: (String endPath, context) {
         context.navigationCubit.push(
@@ -57,10 +57,26 @@ class _MainAppState extends State<MainApp> {
 
 class AppDependencyContainer extends DependencyContainer {
   @override
-  Future<void> init() async {}
+  Future<void> init() async {
+    print("init");
+  }
 
   @override
-  Future<void> dispose() async {}
+  Future<void> dispose() async {
+    print("dispose");
+  }
+}
+
+class AppDependencyModuleContainer extends DependencyContainer {
+  @override
+  Future<void> init() async {
+    print("init module");
+  }
+
+  @override
+  Future<void> dispose() async {
+    print("dispose module");
+  }
 }
 
 class FirstPage extends StatelessWidget {
@@ -73,18 +89,37 @@ class FirstPage extends StatelessWidget {
       child: Center(
         child: TextButton(
           onPressed: () {
-            context.navigationCubit.push(
-              AppPage(
-                page: const MaterialPage(
-                  child: SecondPage(),
-                ),
-                path: "s",
-              ),
-            );
+            context.navigationCubit.push(SecondModuleBridget().getRootWidget());
           },
           child: Text("second"),
         ),
       ),
     ));
+  }
+}
+
+class SecondModule extends StatelessWidget {
+  const SecondModule({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return FlutterModule.build(
+      builder: (context) {
+        return SecondPage();
+      },
+      dependencyContainer: AppDependencyModuleContainer(),
+    );
+  }
+}
+
+class SecondModuleBridget extends BaseModuleBridge {
+  @override
+  AppPage getRootWidget({
+    ModuleFeaturePage displayPage = const DefaultRootPage(),
+    String? deepLink,
+  }) {
+    return AppPage(
+        page: const MaterialPage(key: ValueKey("s"), child: SecondModule()),
+        path: "s");
   }
 }
