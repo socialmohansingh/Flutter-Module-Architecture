@@ -10,7 +10,7 @@ import 'package:flutter_module_architecture/src/route_parser/url_handler_informa
 
 // ignore: must_be_immutable
 class FlutterModule extends StatefulWidget {
-  List<AppPage> Function()? rootPages;
+  Future<List<AppPage>> Function()? rootPages;
   final Function(String endPath, BuildContext context)? handleDeepLink;
   final Widget Function(
     BuildContext context, {
@@ -30,7 +30,7 @@ class FlutterModule extends StatefulWidget {
       BuildContext context,
     ) builder,
     required Future<bool> Function(NavigationCubit navigation) onWillPop,
-    required List<AppPage> Function() rootPages,
+    required Future<List<AppPage>> Function() rootPages,
     DependencyContainer? dependencyContainer,
     Function(String endPath, BuildContext context)? handleDeepLink,
     Widget Function(String error)? errorWidget,
@@ -57,7 +57,6 @@ class FlutterModule extends StatefulWidget {
     Widget Function()? loadingWidget,
   }) {
     return FlutterModule._(
-      rootPages: () => [],
       builder: (cotext, {routerDelegate, routeInformationParser}) {
         return builder(cotext);
       },
