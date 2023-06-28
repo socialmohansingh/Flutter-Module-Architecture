@@ -12,7 +12,7 @@ class UrlHandlerRouterDelegate extends RouterDelegate<NavigationRouteState>
   String endPaths;
   final Future<bool> Function(BuildContext context) onWillPop;
   final Future<void> Function(NavigationRouteState configuration) updatePath;
-  late  BuildContext myContext;
+  late BuildContext myContext;
 
   List<AppPage> initialPages;
   UrlHandlerRouterDelegate({
@@ -24,27 +24,20 @@ class UrlHandlerRouterDelegate extends RouterDelegate<NavigationRouteState>
 
   @override
   Widget build(BuildContext context) {
-    this.myContext = context;
+    myContext = context;
     final heroController = HeroController();
-    return WillPopScope(
-      onWillPop: () async {
-        print("w");
-        return false;
+    return Navigator(
+      key: urlHandlerRouterDelegateNavigatorKey,
+      pages: List.unmodifiable(initialPages.map((e) => e.page)),
+      observers: [heroController],
+      onPopPage: (route, result) {
+        final didPop = route.didPop(result);
+        if (!didPop) {
+          return false;
+        }
+        context.read<NavigationCubit>().pop();
+        return true;
       },
-      child: Navigator(
-        key: urlHandlerRouterDelegateNavigatorKey,
-        pages: List.unmodifiable(initialPages.map((e) => e.page)),
-        observers: [heroController],
-        onPopPage: (route, result) {
-          print("here");
-          final didPop = route.didPop(result);
-          if (!didPop) {
-            return false;
-          }
-          context.read<NavigationCubit>().pop();
-          return true;
-        },
-      ),
     );
     ;
   }

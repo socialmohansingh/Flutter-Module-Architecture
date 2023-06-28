@@ -1,7 +1,16 @@
-import 'package:flutter/material.dart';
+import 'package:flutter_module_architecture/src/navigation/app_page.dart';
 
-abstract class ModuleFeaturePage {}
+abstract class ModuleFeaturePage {
+  const ModuleFeaturePage();
+}
 
-abstract class BaseModule {
-  MaterialPage getRootWidget({ModuleFeaturePage? displayPage});
+class DefaultRootPage extends ModuleFeaturePage {
+  const DefaultRootPage();
+}
+
+abstract class BaseModuleBridge {
+  AppPage getRootWidget({
+    ModuleFeaturePage displayPage = const DefaultRootPage(),
+    String? deepLink,
+  });
 }
