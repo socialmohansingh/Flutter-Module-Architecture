@@ -83,10 +83,11 @@ class FlutterModule extends StatefulWidget {
 }
 
 class _FlutterModuleState extends State<FlutterModule> {
+  List<AppPage> _pages = [];
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: widget.dependencyContainer?.init(),
+      future: loadAsyncFunctions(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           if (snapshot.hasError) {
@@ -100,7 +101,7 @@ class _FlutterModuleState extends State<FlutterModule> {
                   providers: [
                     BlocProvider(
                       create: (context) => NavigationCubit(
-                        InitialState(widget.rootPages!()),
+                        InitialState(_pages),
                       ),
                     ),
                     BlocProvider(
@@ -126,6 +127,13 @@ class _FlutterModuleState extends State<FlutterModule> {
         }
       },
     );
+
+    func loadAsyncFunctions() async {
+      await widget.dependencyContainer?.init();
+      if(widget.rootPages != null) {
+        await widget.rootPages!();
+      }
+    }
   }
 
   Widget getBuilder({List<AppPage> pages = const [], String endPath = ""}) {
