@@ -107,6 +107,20 @@ class NavigationCubit extends Cubit<NavigationState>
     emit(UpdatePage(_pages));
     return true;
   }
+  @override
+  List<AppPage> pages(){
+         return _pages;
+  }
+    
+  @override
+  AppPage? topPage(){
+      return _pages.lastOrNull;
+  }
+    
+  @override
+  AppPage? rootPage(){
+      return _pages.firstOrNull;
+  }
 
   _updatePaths() {}
 }
