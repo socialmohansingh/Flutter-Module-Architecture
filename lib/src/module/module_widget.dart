@@ -95,14 +95,13 @@ class _FlutterModuleState extends State<FlutterModule> {
                 ? Container()
                 : widget.errorWidget!("");
           }
+          GlobalConnector.navigationCubit.pushPages(_pages);
           return !widget.isRoot
               ? getBuilder(context)
               : MultiBlocProvider(
                   providers: [
                     BlocProvider(
-                      create: (context) => NavigationCubit(
-                        InitialState(_pages),
-                      ),
+                      create: (context) => GlobalConnector.navigationCubit,
                     ),
                     BlocProvider(
                       create: (context) => GlobalConnector.data,
@@ -182,4 +181,5 @@ extension BuildContextNavigation on BuildContext {
 
 class GlobalConnector {
   static final data = DataConnectorCubit();
+  static final navigationCubit = NavigationCubit(InitialState([]));
 }
