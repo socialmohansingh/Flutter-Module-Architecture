@@ -41,16 +41,6 @@ class _MainAppState extends State<MainApp> {
         navigation.pop();
         return true;
       },
-      handleDeepLink: (String endPath, context) {
-        context.navigationCubit.push(
-          AppPage(
-            page: const MaterialPage(
-              child: SecondPage(),
-            ),
-            path: "s",
-          ),
-        );
-      },
     );
   }
 }
