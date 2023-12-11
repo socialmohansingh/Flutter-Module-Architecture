@@ -15,6 +15,8 @@ class MainApp extends StatefulWidget {
   State<MainApp> createState() => _MainAppState();
 }
 
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
 class _MainAppState extends State<MainApp> {
   @override
   Widget build(BuildContext context) {
@@ -28,10 +30,20 @@ class _MainAppState extends State<MainApp> {
           return MaterialApp.router(
             routerDelegate: routerDelegate,
             routeInformationParser: routeInformationParser,
+            key: navigatorKey,
           );
         },
         handleDeepLink: (endPath, context, navigation) {
           print(endPath);
+          print(routePages[endPath]);
+        },
+        stateUpdated: (state, context, navigation) {
+          if (state.pages.isNotEmpty) {
+            navigation.resetPages(state.pages);
+          }
+          print("state");
+          print(state.pages);
+          print("state");
         },
         rootPages: () async {
           return [
