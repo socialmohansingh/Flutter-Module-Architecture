@@ -11,7 +11,9 @@ import 'package:flutter_module_architecture/src/route_parser/url_handler_informa
 // ignore: must_be_immutable
 class FlutterModule extends StatefulWidget {
   Future<List<AppPage>> Function()? rootPages;
-  final Function(String endPath, BuildContext context, NavigationCubit navigation)? handleDeepLink;
+  final Function(
+          String endPath, BuildContext context, NavigationCubit navigation)?
+      handleDeepLink;
   final Widget Function(
     BuildContext context, {
     RouterDelegate<Object>? routerDelegate,
@@ -32,7 +34,8 @@ class FlutterModule extends StatefulWidget {
     required Future<bool> Function(NavigationCubit navigation) onWillPop,
     required Future<List<AppPage>> Function() rootPages,
     DependencyContainer? dependencyContainer,
-    Function(String endPath, BuildContext context, NavigationCubit navigation)? handleDeepLink,
+    Function(String endPath, BuildContext context, NavigationCubit navigation)?
+        handleDeepLink,
     Widget Function(String error)? errorWidget,
     Widget Function()? loadingWidget,
   }) {
@@ -95,13 +98,13 @@ class _FlutterModuleState extends State<FlutterModule> {
                 ? Container()
                 : widget.errorWidget!("");
           }
-          
           return !widget.isRoot
               ? getBuilder(context)
               : MultiBlocProvider(
                   providers: [
                     BlocProvider(
-                      create: (context) => NavigationCubit(InitialState(_pages)),
+                      create: (context) =>
+                          NavigationCubit(InitialState(_pages)),
                     ),
                     BlocProvider(
                       create: (context) => GlobalConnector.data,
@@ -109,13 +112,12 @@ class _FlutterModuleState extends State<FlutterModule> {
                   ],
                   child: BlocBuilder<NavigationCubit, NavigationState>(
                     builder: (context, state) {
-                      List<AppPage> pages = state.pages;
+                      List<String> pages = generateWebPath(state.pages);
                       final endPath = pages
-                          .map((e) => e.path)
-                          .toList()
                           .where((element) => element.isNotEmpty)
                           .join("/");
-                      return getBuilder(context, pages: pages, endPath: endPath);
+                      return getBuilder(context,
+                          pages: state.pages, endPath: endPath);
                     },
                   ),
                 );
@@ -128,14 +130,35 @@ class _FlutterModuleState extends State<FlutterModule> {
     );
   }
 
+  List<String> generateWebPath(List<AppPage> pages) {
+    List<String> newPaths = [];
+
+    for (AppPage page in pages) {
+      for (int i = 0; i < page.replacePathIndexCount; i++) {
+        newPaths.removeLast();
+      }
+
+      if (!(page.path.trim().isEmpty || page.path.isEmpty)) {
+        String path = page.path;
+        if (path[0] == "/") {
+          path.replaceFirst("/", "");
+        }
+        newPaths.add(path);
+      }
+    }
+
+    return newPaths;
+  }
+
   Future<void> loadAsyncFunctions() async {
     await widget.dependencyContainer?.init();
     if (widget.rootPages != null) {
-      _pages = await widget.rootPages!();
+      _pages = cachePages.isEmpty ? await widget.rootPages!() : cachePages;
     }
   }
 
-  Widget getBuilder(BuildContext context, {List<AppPage> pages = const [], String endPath = ""}) {
+  Widget getBuilder(BuildContext context,
+      {List<AppPage> pages = const [], String endPath = ""}) {
     return widget.builder(
       context,
       routerDelegate: !widget.isRoot
@@ -144,7 +167,7 @@ class _FlutterModuleState extends State<FlutterModule> {
               onWillPop: (BuildContext context) {
                 return widget.onWillPop!(context.read<NavigationCubit>());
               },
-              initialPages: pages,
+              initialPages: cachePages.isEmpty ? pages : cachePages,
               endPaths: endPath,
               updatePath: (configuration) async {
                 if (widget.handleDeepLink != null &&

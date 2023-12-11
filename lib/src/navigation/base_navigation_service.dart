@@ -14,4 +14,5 @@ abstract class NavigationService {
   bool popToPage(String key, {dynamic argument});
   bool popPages(List<String> keys);
   bool popToRoot({dynamic argument});
+  bool clearCachePages();
 }

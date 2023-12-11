@@ -18,29 +18,40 @@ class MainApp extends StatefulWidget {
 class _MainAppState extends State<MainApp> {
   @override
   Widget build(BuildContext context) {
-    return FlutterModule.buildRootRouter(
-      builder: (routerDelegate, routeInformationParser, context) {
-        return MaterialApp.router(
-          routerDelegate: routerDelegate,
-          routeInformationParser: routeInformationParser,
-        );
-      },
-      rootPages: () async {
-        return [
-          AppPage(
-            page: const MaterialPage(
-              key: ValueKey(""),
-              child: FirstPage(),
-            ),
-            path: "",
-          ),
-        ];
-      },
-      dependencyContainer: AppDependencyContainer(),
-      onWillPop: (navigation) async {
-        navigation.pop();
+    return WillPopScope(
+      onWillPop: () async {
+        print("pop");
         return true;
       },
+      child: FlutterModule.buildRootRouter(
+        builder: (routerDelegate, routeInformationParser, context) {
+          return MaterialApp.router(
+            routerDelegate: routerDelegate,
+            routeInformationParser: routeInformationParser,
+          );
+        },
+        handleDeepLink: (endPath, context, navigation) {
+          print(endPath);
+        },
+        rootPages: () async {
+          return [
+            AppPage(
+              page: const MaterialPage(
+                key: ValueKey(""),
+                child: FirstPage(),
+              ),
+              path: "",
+            ),
+          ];
+        },
+        dependencyContainer: AppDependencyContainer(),
+        onWillPop: (navigation) async {
+          print("pop1");
+          print("pop1");
+          navigation.pop();
+          return true;
+        },
+      ),
     );
   }
 }

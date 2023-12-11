@@ -3,6 +3,8 @@ import 'package:flutter_core/flutter_core.dart';
 import 'package:flutter_module_architecture/flutter_module_architecture.dart';
 import 'package:flutter_module_architecture/src/navigation/navigation_state.dart';
 
+List<AppPage> cachePages = [];
+
 class NavigationCubit extends Cubit<NavigationState>
     implements NavigationService {
   final List<AppPage> _pages = [];
@@ -19,6 +21,7 @@ class NavigationCubit extends Cubit<NavigationState>
     if (_pages.length > 1) {
       _pages.removeLast();
       _updatePaths();
+      cachePages = _pages;
       emit(UpdatePage(_pages));
     }
     return true;
@@ -28,6 +31,8 @@ class NavigationCubit extends Cubit<NavigationState>
   bool push(AppPage page) {
     _pages.add(page);
     _updatePaths();
+    cachePages = _pages;
+    print(cachePages);
     emit(UpdatePage(_pages));
     return true;
   }
@@ -39,6 +44,7 @@ class NavigationCubit extends Cubit<NavigationState>
       _pages.clear();
       _pages.add(page);
       _updatePaths();
+      cachePages = _pages;
       emit(UpdatePage(_pages));
     }
     return true;
@@ -49,6 +55,7 @@ class NavigationCubit extends Cubit<NavigationState>
     _pages.clear();
     _pages.add(page);
     _updatePaths();
+    cachePages = _pages;
     emit(UpdatePage(_pages));
     return true;
   }
@@ -60,6 +67,7 @@ class NavigationCubit extends Cubit<NavigationState>
       _pages.removeAt(index);
     }
     _updatePaths();
+    cachePages = _pages;
     emit(UpdatePage(_pages));
     return true;
   }
@@ -73,6 +81,7 @@ class NavigationCubit extends Cubit<NavigationState>
       }
     }
     _updatePaths();
+    cachePages = _pages;
     emit(UpdatePage(_pages));
     return true;
   }
@@ -87,6 +96,7 @@ class NavigationCubit extends Cubit<NavigationState>
       }
     }
     _updatePaths();
+    cachePages = _pages;
     emit(UpdatePage(_pages));
     return true;
   }
@@ -95,6 +105,7 @@ class NavigationCubit extends Cubit<NavigationState>
   bool pushPages(List<AppPage> pages, {argument}) {
     _pages.addAll(pages);
     _updatePaths();
+    cachePages = _pages;
     emit(UpdatePage(_pages));
     return true;
   }
@@ -104,11 +115,11 @@ class NavigationCubit extends Cubit<NavigationState>
     _pages.clear();
     _pages.addAll(pages);
     _updatePaths();
+    cachePages = _pages;
     emit(UpdatePage(_pages));
     return true;
   }
 
-    
   @override
   List<AppPage> pages() {
     return _pages;
@@ -124,6 +135,13 @@ class NavigationCubit extends Cubit<NavigationState>
     return _pages.isNotEmpty ? _pages.first : null;
   }
 
+  @override
+  bool clearCachePages() {
+    print("clear");
+    cachePages.clear();
+    cachePages = [];
+    return true;
+  }
 
   _updatePaths() {}
 }
